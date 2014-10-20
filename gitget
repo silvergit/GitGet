@@ -1,0 +1,40 @@
+#!/bin/python2
+
+import json
+import urllib2
+import sys
+
+def usage():
+    print "Usage:"
+    print "  gitget.py name [language]\n"
+    print "Examples:"
+    print "  gitget.py TicTacToe"
+    print "  gitget.py board_game cpp"
+    print "  gitget.py musicplayer python"
+
+
+def main():
+    if len(sys.argv) < 2 or len(sys.argv) > 3:
+        usage()
+        sys.exit()
+    elif len(sys.argv) == 2:
+        request_link = "https://api.github.com/search/repositories?q=" + sys.argv[1] + "&sort=stars&order=desc"
+    elif len(sys.argv) == 3:
+        request_link = "https://api.github.com/search/repositories?q=" + sys.argv[1] +"+language:" + sys.argv[2] + "&sort=stars&order=desc"
+    
+    getData(request_link)
+        
+def getData(request_link):
+    
+    j = urllib2.urlopen(request_link)
+    js = json.load(j)
+    for i in js['items']:
+        out_str = "Name:        " + i['name'] + '\n'
+        out_str += "Language:    " + i['language'] + '\n'
+        out_str += "Description: " + i['description'] + '\n'
+        out_str += "Size:        " + str(i['size']) + ' kb\n'
+        out_str += "URL:         " + i['html_url']
+        print out_str
+        print '========================================================='
+if __name__ == '__main__':
+    main()
